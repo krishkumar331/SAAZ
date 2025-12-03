@@ -1,0 +1,82 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ARTIST
+  VENUE
+  USER
+}
+
+model User {
+  id                   Int       @id @default(autoincrement())
+  email                String    @unique
+  username             String?   @unique
+  password             String?
+  googleId             String?   @unique
+  role                 Role
+  name                 String
+  image                String?
+  location             String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+
+  artistProfile ArtistProfile?
+  venueProfile  VenueProfile?
+  events        Event[]
+}
+
+model ArtistProfile {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  category  String    // e.g., "Singer", "Dancer"
+  location  String
+  bio       String?
+  // Prefer Decimal for money in Postgres. Use String if you want to keep it simple.
+  price     Decimal?  @db.Decimal(10, 2)
+  rating    Float     @default(0)
+  image     String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model VenueProfile {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @unique
+  user       User     @relation(fields: [userId], references: [id])
+  type       String   // e.g., "Cafe", "Club"
+  location   String
+  capacity   Int?
+  // Use JSONB to store array-like data cleanly in Postgres.
+  lookingFor Json?
+  image      String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  date        DateTime
+  location    String
+  description String?
+  // Prefer Decimal for money in Postgres. Use String if you want to keep it simple.
+  price       Decimal? @db.Decimal(10, 2)
+  image       String?
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

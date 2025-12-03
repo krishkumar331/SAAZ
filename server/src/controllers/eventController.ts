@@ -1,0 +1,158 @@
+import { Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { AuthRequest } from '../middleware/auth';
+
+const prisma = new PrismaClient();
+
+export const createEvent = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    console.log("Create Event Request User:", req.user);
+
+    // Check if user is a VENUE or ARTIST
+    if (req.user?.role !== 'VENUE' && req.user?.role !== 'ARTIST') {
+      return res.status(403).json({ error: "Only Venues or Artists can create events" });
+    }
+
+    console.log("Create Event Body:", req.body);
+
+    const { title, date, location, description, price, image } = req.body;
+
+    if (!location) {
+      return res.status(400).json({ error: "Location is required" });
+    }
+
+    const event = await prisma.event.create({
+      data: {
+        title,
+        date: new Date(date),
+        location,
+        description,
+        price,
+        image,
+        creatorId: userId
+      }
+    });
+
+    console.log("Event Created in DB:", event);
+    res.status(201).json(event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create event" });
+  }
+};
+
+export const getEvents = async (req: AuthRequest, res: Response) => {
+  try {
+    const events = await prisma.event.findMany({
+      include: {
+        creator: {
+          select: {
+            name: true,
+            role: true,
+            venueProfile: { select: { type: true } },
+            artistProfile: { select: { category: true } }
+          }
+        }
+      },
+      orderBy: { date: 'asc' }
+    });
+    res.json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch events" });
+  }
+};
+
+export const getEventById = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const event = await prisma.event.findUnique({
+      where: { id: parseInt(id) },
+      include: {
+        creator: {
+          select: {
+            name: true,
+            role: true
+          }
+        }
+      }
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch event" });
+  }
+};
+
+export const updateEvent = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+    const { title, date, location, description, price, image } = req.body;
+
+    const event = await prisma.event.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    if (event.creatorId !== userId) {
+      return res.status(403).json({ error: "Unauthorized to update this event" });
+    }
+
+    const updatedEvent = await prisma.event.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        date: date ? new Date(date) : undefined,
+        location,
+        description,
+        price,
+        image
+      }
+    });
+
+    res.json(updatedEvent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update event" });
+  }
+};
+
+export const deleteEvent = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.userId;
+
+    const event = await prisma.event.findUnique({
+      where: { id: parseInt(id) }
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    if (event.creatorId !== userId) {
+      return res.status(403).json({ error: "Unauthorized to delete this event" });
+    }
+
+    await prisma.event.delete({
+      where: { id: parseInt(id) }
+    });
+
+    res.json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete event" });
+  }
+};
