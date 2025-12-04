@@ -23,7 +23,8 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== 'VENUE' && ((_c = req.user) === null || _c === void 0 ? void 0 : _c.role) !== 'ARTIST') {
             return res.status(403).json({ error: "Only Venues or Artists can create events" });
         }
-        const { title, date, location, description, image } = req.body;
+        console.log("Create Event Body:", req.body);
+        const { title, date, location, description, price, image } = req.body;
         if (!location) {
             return res.status(400).json({ error: "Location is required" });
         }
@@ -33,10 +34,12 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 date: new Date(date),
                 location,
                 description,
+                price,
                 image,
                 creatorId: userId
             }
         });
+        console.log("Event Created in DB:", event);
         res.status(201).json(event);
     }
     catch (error) {
@@ -98,7 +101,7 @@ const updateEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const { id } = req.params;
         const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
-        const { title, date, location, description, image } = req.body;
+        const { title, date, location, description, price, image } = req.body;
         const event = yield prisma.event.findUnique({
             where: { id: parseInt(id) }
         });
@@ -115,6 +118,7 @@ const updateEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 date: date ? new Date(date) : undefined,
                 location,
                 description,
+                price,
                 image
             }
         });
