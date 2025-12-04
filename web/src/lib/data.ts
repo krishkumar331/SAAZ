@@ -1,0 +1,61 @@
+export const artists = [
+  {
+    id: 1,
+    name: "Ananya Sharma",
+    category: "Classical Vocalist",
+    rating: 4.9,
+    image: "/assets/singer.png",
+    price: "₹15,000/hr",
+    location: "Mumbai",
+    tags: ["Hindustani", "Sufi", "Fusion"],
+  },
+  {
+    id: 2,
+    name: "Vikram Singh",
+    category: "Dancer",
+    rating: 4.8,
+    image: "/assets/concert_crowd.png",
+    price: "₹20,000/performance",
+    location: "Delhi",
+    tags: ["Kathak", "Contemporary"],
+  },
+  {
+    id: 3,
+    name: "Rahul & The Rhythms",
+    category: "Band",
+    rating: 4.7,
+    image: "/assets/guitar.png",
+    price: "₹50,000/event",
+    location: "Bangalore",
+    tags: ["Bollywood", "Rock"],
+  },
+  {
+    id: 4,
+    name: "DJ Zoya",
+    category: "DJ",
+    rating: 5.0,
+    image: "/assets/concert_crowd.png",
+    price: "₹30,000/night",
+    location: "Mumbai",
+    tags: ["Techno", "House", "Bollywood"],
+  },
+]
+
+export const venues = [
+  {
+    id: 1,
+    name: "The Bombay Canteen",
+    type: "Restaurant & Bar",
+    location: "Lower Parel, Mumbai",
+    image: "/assets/sax.png",
+    lookingFor: ["Jazz Band", "Solo Guitarist"],
+  },
+  {
+    id: 2,
+    name: "Social Offline",
+    type: "Cafe & Workspace",
+    location: "Hauz Khas, Delhi",
+    image: "/assets/guitar.png",
+    lookingFor: ["Indie Artists", "Stand-up Comics"],
+  },
+]

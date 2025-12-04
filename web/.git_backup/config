@@ -1,0 +1,12 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "SAAZ"]
+	url = https://github.com/krishkumar331/SAAZ.git
+	fetch = +refs/heads/*:refs/remotes/SAAZ/*
+[branch "master"]
+	vscode-merge-base = SAAZ/master
