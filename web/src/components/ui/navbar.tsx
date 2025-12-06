@@ -177,6 +177,10 @@ export function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-6 relative z-10">
+          {/* Theme Toggle - Desktop Only */}
+          <div className="hidden md:block">
+            <ThemeToggle />
+          </div>
           {user ? (
             <div className="hidden sm:flex items-center gap-4">
               <Link href="/profile">

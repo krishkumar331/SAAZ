@@ -40,7 +40,7 @@ export function HeroParallax() {
             SAAZ
           </h1>
           <p className="text-xl md:text-3xl text-muted-foreground max-w-2xl font-light tracking-wide mb-10">
-            WHERE ART MEETS OPPORTUNITY IN {city === "All India" ? "INDIA" : city.toUpperCase()}
+            WHERE ART MEETS OPPORTUNITY
           </p>
           <div className="flex flex-col sm:flex-row gap-6">
             <a href="/explore">
@@ -56,6 +56,6 @@ export function HeroParallax() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </div >
   )
 }
