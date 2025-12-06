@@ -109,7 +109,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-10 relative z-10">
           <a href="/" className="flex items-center">
-            <Image src="/assets/logo.png" alt="SAAZ Logo" width={300} height={120} className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-10 md:h-12" : "h-16 md:h-20"}`} />
+            <Image src="/assets/logo.jpg" alt="SAAZ Logo" width={300} height={120} className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-10 md:h-12" : "h-16 md:h-20"}`} />
           </a>
 
           {/* Location Picker */}

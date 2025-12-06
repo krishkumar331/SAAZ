@@ -52,7 +52,7 @@ export function ParallaxFooter() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-6">
-                <Image src="/assets/logo.png" alt="SAAZ Logo" width={240} height={100} className="h-24 w-auto object-contain mb-6" />
+                <Image src="/assets/logo.jpg" alt="SAAZ Logo" width={240} height={100} className="h-24 w-auto object-contain mb-6" />
               </div>
               <p className="text-neutral-400 max-w-sm mb-8">
                 Bridging the gap between extraordinary talent and the stages that need them. Join the revolution in live performance booking.
