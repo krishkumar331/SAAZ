@@ -471,41 +471,44 @@ export default function RegisterPage() {
                   </div>
 
                   <div className="flex justify-center">
-                    <GoogleLogin
-                      onSuccess={async (credentialResponse) => {
-                        try {
-                          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/google`, {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                              credential: credentialResponse.credential,
-                              role, // Pass the selected role
-                            }),
-                          })
+                    <div className="inline-block rounded-full overflow-hidden bg-background dark:bg-card border border-border/50">
+                      <GoogleLogin
+                        onSuccess={async (credentialResponse) => {
+                          try {
+                            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/google`, {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                credential: credentialResponse.credential,
+                                role, // Pass the selected role
+                              }),
+                            })
 
-                          const data = await response.json()
+                            const data = await response.json()
 
-                          if (!response.ok) {
-                            throw new Error(data.error || "Google registration failed")
+                            if (!response.ok) {
+                              throw new Error(data.error || "Google registration failed")
+                            }
+
+                            login(data.token, data.user)
+                            router.push("/profile")
+                          } catch (error) {
+                            console.error("Google registration error:", error)
+                            alert("Google registration failed")
                           }
-
-                          login(data.token, data.user)
-                          router.push("/profile")
-                        } catch (error) {
-                          console.error("Google registration error:", error)
+                        }}
+                        onError={() => {
+                          console.log("Registration Failed")
                           alert("Google registration failed")
-                        }
-                      }}
-                      onError={() => {
-                        console.log("Registration Failed")
-                        alert("Google registration failed")
-                      }}
-                      useOneTap
-                      theme="filled_black"
-                      shape="pill"
-                    />
+                        }}
+                        useOneTap
+                        theme="outline"
+                        shape="pill"
+                        size="large"
+                      />
+                    </div>
                   </div>
                 </form>
               </motion.div>

@@ -206,20 +206,23 @@ function LoginContent() {
           </div>
 
           <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                if (credentialResponse.credential) {
-                  handleGoogleLogin(credentialResponse.credential)
-                }
-              }}
-              onError={() => {
-                console.log("Login Failed")
-                alert("Google login failed")
-              }}
-              useOneTap
-              theme="filled_black"
-              shape="pill"
-            />
+            <div className="inline-block rounded-full overflow-hidden bg-background dark:bg-card border border-border/50">
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  if (credentialResponse.credential) {
+                    handleGoogleLogin(credentialResponse.credential)
+                  }
+                }}
+                onError={() => {
+                  console.log("Login Failed")
+                  alert("Google login failed")
+                }}
+                useOneTap
+                theme="outline"
+                shape="pill"
+                size="large"
+              />
+            </div>
           </div>
         </form>
 
