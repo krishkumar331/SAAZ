@@ -91,9 +91,9 @@ export const register = async (req: Request, res: Response) => {
             create: {
               category: profileData.category?.toUpperCase() || "UNSPECIFIED",
               location: profileData.location?.toUpperCase() || "UNKNOWN",
-              bio: profileData.bio,
-              price: profileData.price?.toUpperCase(),
-              image: profileData.image
+              bio: profileData.bio || undefined,
+              price: profileData.price ? parseFloat(profileData.price) : undefined,
+              image: profileData.image || undefined
             }
           }
         }),
@@ -103,7 +103,7 @@ export const register = async (req: Request, res: Response) => {
               type: profileData.type?.toUpperCase() || "UNSPECIFIED",
               location: profileData.location?.toUpperCase() || "UNKNOWN",
               capacity: profileData.capacity ? parseInt(profileData.capacity) : undefined,
-              image: profileData.image
+              image: profileData.image || undefined
             }
           }
         })
@@ -114,9 +114,9 @@ export const register = async (req: Request, res: Response) => {
     const image = role === "ARTIST" ? profileData.image : role === "VENUE" ? profileData.image : null;
 
     res.status(201).json({ message: "User registered successfully", token, user: { id: user.id, email: user.email, name: user.name, role: user.role, username: user.username, image } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Registration failed" });
+  } catch (error: any) {
+    console.error("Registration full error object:", error);
+    res.status(500).json({ error: error?.message || "Registration failed" });
   }
 };
 
@@ -157,9 +157,9 @@ export const login = async (req: Request, res: Response) => {
     const image = user.artistProfile?.image || user.venueProfile?.image;
 
     res.json({ message: "Login successful", token, user: { id: user.id, email: user.email, name: user.name, role: user.role, username: user.username, image } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Login failed" });
+  } catch (error: any) {
+    console.error("Login full error object:", error);
+    res.status(500).json({ error: error?.message || "Login failed" });
   }
 };
 
