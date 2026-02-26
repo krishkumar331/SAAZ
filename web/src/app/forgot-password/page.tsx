@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Loader2, ArrowLeft, Mail } from "lucide-react"
 import { useEmailValidation } from "@/hooks/use-email-validation"
+import { showError } from "@/lib/toast-utils"
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
       setIsSubmitted(true)
     } catch (error) {
       console.error("Forgot password error:", error)
-      alert(error instanceof Error ? error.message : "Something went wrong")
+      showError(error instanceof Error ? error.message : "Something went wrong")
     } finally {
       setIsLoading(false)
     }

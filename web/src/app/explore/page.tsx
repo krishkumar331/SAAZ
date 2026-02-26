@@ -8,6 +8,7 @@ import { Search, Filter, MapPin, Star, Calendar, ArrowUpDown } from "lucide-reac
 import { useSearchParams, useRouter } from "next/navigation"
 import { ParallaxHeader } from "@/components/ui/parallax-header"
 import { useLocation } from "@/contexts/location-context"
+import { showSuccess } from "@/lib/toast-utils"
 
 function ExploreContent() {
   const searchParams = useSearchParams()
@@ -76,7 +77,7 @@ function ExploreContent() {
       router.push("/login")
       return
     }
-    alert("Request sent successfully!")
+    showSuccess("Request sent successfully!")
   }
 
   const [searchQuery, setSearchQuery] = useState("")

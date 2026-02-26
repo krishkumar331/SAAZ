@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Loader2, Eye, EyeOff, CheckCircle } from "lucide-react"
+import { showError, showWarning } from "@/lib/toast-utils"
 
 import { Suspense } from "react"
 
@@ -28,12 +29,12 @@ function ResetPasswordContent() {
     e.preventDefault()
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match")
+      showWarning("Passwords do not match")
       return
     }
 
     if (password.length < 6) {
-      alert("Password must be at least 6 characters")
+      showWarning("Password must be at least 6 characters")
       return
     }
 
@@ -60,7 +61,7 @@ function ResetPasswordContent() {
       }, 3000)
     } catch (error) {
       console.error("Reset password error:", error)
-      alert(error instanceof Error ? error.message : "Something went wrong")
+      showError(error instanceof Error ? error.message : "Something went wrong")
     } finally {
       setIsLoading(false)
     }

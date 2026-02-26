@@ -7,6 +7,7 @@ import { EditProfileModal } from "@/components/profile/edit-profile-modal"
 import { CreatePostModal } from "@/components/profile/create-post-modal"
 import { EditEventModal } from "@/components/profile/edit-event-modal"
 import { useAuth } from "@/contexts/auth-context"
+import { showError } from "@/lib/toast-utils"
 
 
 interface EventType {
@@ -118,7 +119,7 @@ export default function ProfilePage() {
       window.location.reload()
     } catch (error) {
       console.error("Delete event error:", error)
-      alert("Failed to delete event")
+      showError("Failed to delete event")
     }
   }
 

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useEmailValidation } from "@/hooks/use-email-validation"
 import { GoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/contexts/auth-context"
+import { showError, showWarning, showInfo } from "@/lib/toast-utils"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -83,7 +84,7 @@ export default function RegisterPage() {
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser")
+      showWarning("Geolocation is not supported by your browser")
       return
     }
 
@@ -112,11 +113,11 @@ export default function RegisterPage() {
           if (preciseLocation) {
             setFormData((prev) => ({ ...prev, location: preciseLocation.toUpperCase() }))
           } else {
-            alert("Could not detect precise location. Please enter manually.")
+            showWarning("Could not detect precise location. Please enter manually.")
           }
         } catch (error) {
           console.error("Error getting location:", error)
-          alert("Failed to detect location. Please enter manually.")
+          showError("Failed to detect location. Please enter manually.")
         } finally {
           setIsGettingLocation(false)
         }
@@ -145,7 +146,7 @@ export default function RegisterPage() {
 
     if (!validateEmail()) return
     if (usernameStatus === "taken") {
-      alert("Please choose a unique username")
+      showWarning("Please choose a unique username")
       return
     }
 
@@ -168,7 +169,7 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         if (data.error === "User already exists") {
-          alert("User already exists. Redirecting to login...")
+          showInfo("User already exists. Redirecting to login...")
           router.push("/login")
           return
         }
@@ -179,7 +180,7 @@ export default function RegisterPage() {
       router.push("/login?registered=true")
     } catch (error) {
       console.error("Registration error:", error)
-      alert(error instanceof Error ? error.message : "Something went wrong")
+      showError(error instanceof Error ? error.message : "Something went wrong")
     } finally {
       setIsLoading(false)
     }
@@ -496,12 +497,12 @@ export default function RegisterPage() {
                             router.push("/profile")
                           } catch (error) {
                             console.error("Google registration error:", error)
-                            alert("Google registration failed")
+                            showError("Google registration failed. Please try again.")
                           }
                         }}
                         onError={() => {
                           console.log("Registration Failed")
-                          alert("Google registration failed")
+                          showError("Google registration failed. Please try again.")
                         }}
                         useOneTap
                         theme="outline"

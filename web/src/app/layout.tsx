@@ -32,7 +32,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GoogleOAuthProvider clientId="57543675268-d4psk9bgktuf9n4epn101g7oufovft0v.apps.googleusercontent.com">
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
             <AuthProvider>
               <LocationProvider>
                 <SmoothScroll>

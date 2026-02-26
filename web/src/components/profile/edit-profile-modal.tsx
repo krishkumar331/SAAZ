@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { X, Loader2, MapPin } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { showError, showWarning } from "@/lib/toast-utils"
 
 interface EditProfileModalProps {
   isOpen: boolean
@@ -27,7 +28,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser")
+      showWarning("Geolocation is not supported by your browser")
       return
     }
 
@@ -56,11 +57,11 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
           if (preciseLocation) {
             setFormData((prev) => ({ ...prev, location: preciseLocation.toUpperCase() }))
           } else {
-            alert("Could not detect precise location. Please enter manually.")
+            showWarning("Could not detect precise location. Please enter manually.")
           }
         } catch (error) {
           console.error("Error getting location:", error)
-          alert("Failed to detect location. Please enter manually.")
+          showError("Failed to detect location. Please enter manually.")
         } finally {
           setIsGettingLocation(false)
         }
@@ -99,7 +100,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
       window.location.href = "/"
     } catch (error) {
       console.error("Delete error:", error)
-      alert("Failed to delete profile")
+      showError("Failed to delete profile")
       setIsLoading(false)
     }
   }
@@ -108,7 +109,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
     e.preventDefault()
 
     if (!formData.location.trim()) {
-      alert("Location is required")
+      showWarning("Location is required")
       return
     }
 
@@ -143,7 +144,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
       onClose()
     } catch (error) {
       console.error("Update error:", error)
-      alert("Failed to update profile")
+      showError("Failed to update profile")
     } finally {
       setIsLoading(false)
     }
@@ -207,7 +208,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
                       setFormData(prev => ({ ...prev, image: data.imageUrl }))
                     } catch (error) {
                       console.error("Upload error:", error)
-                      alert("Failed to upload image")
+                      showError("Failed to upload image")
                     } finally {
                       setIsLoading(false)
                     }

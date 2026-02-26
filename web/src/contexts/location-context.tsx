@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useState, useEffect } from "react"
+import { showWarning, showError } from "@/lib/toast-utils"
 
 type City = string
 
@@ -44,7 +45,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
   const detectLocation = async () => {
     setIsLoadingLocation(true)
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser")
+      showWarning("Geolocation is not supported by your browser")
       setIsLoadingLocation(false)
       return
     }
@@ -84,7 +85,7 @@ export function LocationProvider({ children }: { children: React.ReactNode }) {
       console.log("Location detected:", latitude, longitude)
     } catch (error) {
       console.error("Error detecting location:", error)
-      alert("Unable to retrieve your location")
+      showError("Unable to retrieve your location")
     } finally {
       setIsLoadingLocation(false)
     }

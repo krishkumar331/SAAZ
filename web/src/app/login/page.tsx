@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2, Eye, EyeOff, User, Music, MapPin } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { GoogleLogin } from "@react-oauth/google"
+import { showError } from "@/lib/toast-utils"
 
 function LoginContent() {
   const router = useRouter()
@@ -39,7 +40,7 @@ function LoginContent() {
       router.push("/profile")
     } catch (error) {
       console.error("Login error:", error)
-      alert(error instanceof Error ? error.message : "Something went wrong")
+      showError(error instanceof Error ? error.message : "Something went wrong")
     } finally {
       setIsLoading(false)
     }
@@ -68,7 +69,7 @@ function LoginContent() {
       router.push("/profile")
     } catch (error) {
       console.error("Google login error:", error)
-      alert("Google login failed")
+      showError("Google login failed. Please try again.")
     }
   }
 
@@ -215,7 +216,7 @@ function LoginContent() {
                 }}
                 onError={() => {
                   console.log("Login Failed")
-                  alert("Google login failed")
+                  showError("Google login failed. Please try again.")
                 }}
                 useOneTap
                 theme="outline"
