@@ -1,0 +1,20 @@
+{
+  "asset_id": "f15a13ff8bc6919de81052ccc86c4997",
+  "public_id": "saaz_uploads_test/bkamls5fbzyaxzdbtgy1",
+  "version": 1772385503,
+  "version_id": "5aa7653f631cfa6c976cc39a60c1cef4",
+  "signature": "be733a3525e3576a2db843d6e4ea1fd5e1e15654",
+  "resource_type": "raw",
+  "created_at": "2026-03-01T17:18:23Z",
+  "tags": [],
+  "bytes": 35,
+  "type": "upload",
+  "etag": "5e23c45858a8b6171cea3cb687598b7a",
+  "placeholder": false,
+  "url": "http://res.cloudinary.com/dq88yp1sf/raw/upload/v1772385503/saaz_uploads_test/bkamls5fbzyaxzdbtgy1",
+  "secure_url": "https://res.cloudinary.com/dq88yp1sf/raw/upload/v1772385503/saaz_uploads_test/bkamls5fbzyaxzdbtgy1",
+  "asset_folder": "saaz_uploads_test",
+  "display_name": "bkamls5fbzyaxzdbtgy1",
+  "original_filename": "file",
+  "api_key": "688854834254668"
+}

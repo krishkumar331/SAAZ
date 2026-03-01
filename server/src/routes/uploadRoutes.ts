@@ -3,7 +3,14 @@ import { upload } from '../middleware/uploadMiddleware';
 import { Request, Response } from 'express';
 import { v2 as cloudinary } from 'cloudinary';
 
-// Cloudinary will automatically pick up the CLOUDINARY_URL environment variable from .env
+// Explicitly initialize Cloudinary config
+if (process.env.CLOUDINARY_URL) {
+  cloudinary.config({
+    cloudinary_url: process.env.CLOUDINARY_URL
+  });
+} else {
+  console.warn("WARNING: CLOUDINARY_URL is missing from .env!");
+}
 
 const router = Router();
 
