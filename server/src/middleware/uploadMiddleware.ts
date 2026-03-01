@@ -8,17 +8,8 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Use disk storage to bypass Supabase network restrictions
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const fileExt = file.originalname.split('.').pop() || 'tmp';
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    cb(null, fileName);
-  }
-});
+// Use memory storage so we can stream directly to Cloudinary
+const storage = multer.memoryStorage();
 const fileFilter = (req: any, file: any, cb: any) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);

@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import { upload } from '../middleware/uploadMiddleware';
 import { Request, Response } from 'express';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Cloudinary will automatically pick up the CLOUDINARY_URL environment variable from .env
+
 const router = Router();
 
 router.post('/', upload.single('image'), async (req: Request, res: Response): Promise<any> => {
@@ -9,12 +13,23 @@ router.post('/', upload.single('image'), async (req: Request, res: Response): Pr
   }
 
   try {
-    // Return the local URL pointing to the static express route
-    const imageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/uploads/${req.file.filename}`;
-    
-    res.json({ imageUrl });
+    // Wrap the Cloudinary upload in a promise since upload_stream uses callbacks
+    const result = await new Promise<any>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'saaz_uploads' }, // Optional: organize uploads in a specific folder
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+      // Pipe the multer memory buffer directly to Cloudinary
+      uploadStream.end(req.file?.buffer);
+    });
+
+    // Cloudinary returns a secure_url for the uploaded asset
+    res.json({ imageUrl: result.secure_url });
   } catch (err) {
-    console.error('Upload catch error:', err);
+    console.error('Cloudinary upload error:', err);
     res.status(500).json({ error: 'Internal server error during upload' });
   }
 });
