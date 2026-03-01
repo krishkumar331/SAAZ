@@ -8,7 +8,7 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Use memory storage so we can stream directly to Cloudinary
+// Use memory storage to forward buffers to Supabase
 const storage = multer.memoryStorage();
 const fileFilter = (req: any, file: any, cb: any) => {
   if (file.mimetype.startsWith('image/')) {

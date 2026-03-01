@@ -33,8 +33,8 @@ const prisma = new client_1.PrismaClient();
 const client = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // Helper to generate unique username
 const generateUniqueUsername = (baseName) => __awaiter(void 0, void 0, void 0, function* () {
-    // Remove special chars and spaces, make uppercase
-    let base = baseName.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    // Remove only spaces, make uppercase
+    let base = baseName.replace(/\s+/g, "").toUpperCase();
     if (base.length < 3)
         base = "USER" + crypto_1.default.randomBytes(2).toString('hex').toUpperCase();
     let username = base;
@@ -58,7 +58,7 @@ const checkUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             available = !existing;
         }
         // Generate suggestions
-        const base = username ? username.replace(/[^a-zA-Z0-9]/g, "") : "USER";
+        const base = username ? username.replace(/\s+/g, "").toUpperCase() : "USER";
         for (let i = 0; i < 3; i++) {
             const suffix = Math.floor(1000 + Math.random() * 9000);
             const suggestion = (base + suffix).toUpperCase();
@@ -76,9 +76,9 @@ const checkUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.checkUsername = checkUsername;
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e;
     try {
-        const _g = req.body, { email: rawEmail, password, role, name, username } = _g, profileData = __rest(_g, ["email", "password", "role", "name", "username"]);
+        const _f = req.body, { email: rawEmail, password, role, name, username } = _f, profileData = __rest(_f, ["email", "password", "role", "name", "username"]);
         const email = rawEmail.toLowerCase();
         // Check if user exists
         const existingUser = yield prisma.user.findUnique({ where: { email } });
@@ -99,18 +99,18 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     create: {
                         category: ((_b = profileData.category) === null || _b === void 0 ? void 0 : _b.toUpperCase()) || "UNSPECIFIED",
                         location: ((_c = profileData.location) === null || _c === void 0 ? void 0 : _c.toUpperCase()) || "UNKNOWN",
-                        bio: profileData.bio,
-                        price: (_d = profileData.price) === null || _d === void 0 ? void 0 : _d.toUpperCase(),
-                        image: profileData.image
+                        bio: profileData.bio || undefined,
+                        price: profileData.price ? parseFloat(profileData.price) : undefined,
+                        image: profileData.image || undefined
                     }
                 }
             })), (role === "VENUE" && {
                 venueProfile: {
                     create: {
-                        type: ((_e = profileData.type) === null || _e === void 0 ? void 0 : _e.toUpperCase()) || "UNSPECIFIED",
-                        location: ((_f = profileData.location) === null || _f === void 0 ? void 0 : _f.toUpperCase()) || "UNKNOWN",
+                        type: ((_d = profileData.type) === null || _d === void 0 ? void 0 : _d.toUpperCase()) || "UNSPECIFIED",
+                        location: ((_e = profileData.location) === null || _e === void 0 ? void 0 : _e.toUpperCase()) || "UNKNOWN",
                         capacity: profileData.capacity ? parseInt(profileData.capacity) : undefined,
-                        image: profileData.image
+                        image: profileData.image || undefined
                     }
                 }
             }))
@@ -120,8 +120,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({ message: "User registered successfully", token, user: { id: user.id, email: user.email, name: user.name, role: user.role, username: user.username, image } });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Registration failed" });
+        console.error("Registration full error object:", error);
+        res.status(500).json({ error: (error === null || error === void 0 ? void 0 : error.message) || "Registration failed" });
     }
 });
 exports.register = register;
@@ -131,11 +131,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const { identifier, password } = req.body; // identifier can be email or username
         // Check if identifier is email or username
         const isEmail = identifier.includes('@');
+        // For username we need to strip whitespace, matching our register logic
+        const sanitizedUsername = identifier.replace(/\s+/g, "").toUpperCase();
         const user = yield prisma.user.findFirst({
             where: {
                 OR: [
                     { email: isEmail ? identifier.toLowerCase() : undefined },
-                    { username: !isEmail ? identifier.toUpperCase() : undefined }
+                    { username: !isEmail ? sanitizedUsername : undefined }
                 ]
             },
             include: {
@@ -158,8 +160,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json({ message: "Login successful", token, user: { id: user.id, email: user.email, name: user.name, role: user.role, username: user.username, image } });
     }
     catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Login failed" });
+        console.error("Login full error object:", error);
+        res.status(500).json({ error: (error === null || error === void 0 ? void 0 : error.message) || "Login failed" });
     }
 });
 exports.login = login;

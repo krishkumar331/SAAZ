@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.deleteProfile = exports.updateProfile = exports.getProfile = void 0;
+exports.subscribeNewsletter = exports.getAllUsers = exports.deleteProfile = exports.updateProfile = exports.getProfile = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -73,7 +73,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 update: {
                     bio: profileData.bio,
                     location: profileData.location,
-                    price: profileData.price,
+                    price: profileData.price ? parseFloat(profileData.price) : undefined,
                     image: profileData.image,
                     category: profileData.category,
                 },
@@ -82,7 +82,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     category: profileData.category || "Unspecified",
                     location: profileData.location || "Unknown",
                     bio: profileData.bio,
-                    price: profileData.price,
+                    price: profileData.price ? parseFloat(profileData.price) : undefined,
                     image: profileData.image,
                 }
             });
@@ -94,7 +94,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 update: {
                     lookingFor: profileData.lookingFor,
                     location: profileData.location,
-                    capacity: profileData.capacity,
+                    capacity: profileData.capacity ? parseInt(profileData.capacity.toString()) : undefined,
                     image: profileData.image,
                 },
                 create: {
@@ -102,7 +102,7 @@ const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                     type: "Unspecified", // Default
                     location: profileData.location || "Unknown",
                     lookingFor: profileData.lookingFor,
-                    capacity: profileData.capacity,
+                    capacity: profileData.capacity ? parseInt(profileData.capacity.toString()) : undefined,
                     image: profileData.image,
                 }
             });
@@ -164,3 +164,29 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getAllUsers = getAllUsers;
+const subscribeNewsletter = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email: rawEmail } = req.body;
+        if (!rawEmail) {
+            return res.status(400).json({ error: "Email is required" });
+        }
+        const email = rawEmail.toLowerCase();
+        // Check if already subscribed
+        const existing = yield prisma.subscriber.findUnique({
+            where: { email }
+        });
+        if (existing) {
+            return res.status(400).json({ error: "Already subscribed" });
+        }
+        // Save subscriber
+        yield prisma.subscriber.create({
+            data: { email }
+        });
+        res.status(201).json({ message: "Successfully subscribed" });
+    }
+    catch (error) {
+        console.error("Subscription error:", error);
+        res.status(500).json({ error: "Failed to subscribe" });
+    }
+});
+exports.subscribeNewsletter = subscribeNewsletter;

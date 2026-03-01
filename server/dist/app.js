@@ -14,8 +14,16 @@ const uploadRoutes_1 = __importDefault(require("./routes/uploadRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://saaz-web.vercel.app", process.env.FRONTEND_URL || ""],
-    credentials: true
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin)
+            return callback(null, true);
+        // Allow any origin dynamically
+        return callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 app.use(express_1.default.json());
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));

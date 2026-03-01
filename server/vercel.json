@@ -3,15 +3,7 @@
   "builds": [
     {
       "src": "api/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxLambdaSize": "10mb",
-        "api": {
-          "bodyParser": {
-            "sizeLimit": "10mb"
-          }
-        }
-      }
+      "use": "@vercel/node"
     }
   ],
   "rewrites": [

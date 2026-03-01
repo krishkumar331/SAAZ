@@ -24,22 +24,13 @@ export const createEvent = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ error: "Location is required" });
     }
 
-    // Safely parse price, default to null if it's text like "Free"
-    let parsedPrice: number | undefined = undefined;
-    if (price) {
-      const num = parseFloat(price);
-      if (!isNaN(num)) {
-        parsedPrice = num;
-      }
-    }
-
     const event = await prisma.event.create({
       data: {
         title,
         date: new Date(date),
         location,
         description,
-        price: parsedPrice,
+        price,
         image,
         creatorId: userId
       }
@@ -119,19 +110,6 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ error: "Unauthorized to update this event" });
     }
 
-    // Safely parse price, default to null if it's text like "Free"
-    let parsedPrice: number | undefined = undefined;
-    if (price !== undefined) {
-      if (price) {
-        const num = parseFloat(price);
-        if (!isNaN(num)) {
-          parsedPrice = num;
-        }
-      } else {
-        parsedPrice = undefined;
-      }
-    }
-
     const updatedEvent = await prisma.event.update({
       where: { id: parseInt(id) },
       data: {
@@ -139,7 +117,7 @@ export const updateEvent = async (req: AuthRequest, res: Response) => {
         date: date ? new Date(date) : undefined,
         location,
         description,
-        price: price !== undefined ? parsedPrice : undefined,
+        price,
         image
       }
     });

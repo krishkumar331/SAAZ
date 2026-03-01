@@ -8,4 +8,5 @@ router.get('/profile', auth_1.authenticate, userController_1.getProfile);
 router.put('/profile', auth_1.authenticate, userController_1.updateProfile);
 router.delete('/profile', auth_1.authenticate, userController_1.deleteProfile);
 router.get('/', userController_1.getAllUsers);
+router.post('/subscribe', userController_1.subscribeNewsletter);
 exports.default = router;
