@@ -61,7 +61,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         update: {
           bio: profileData.bio,
           location: profileData.location,
-          price: profileData.price,
+          price: profileData.price ? parseFloat(profileData.price) : undefined,
           image: profileData.image,
           category: profileData.category,
         },
@@ -70,7 +70,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
           category: profileData.category || "Unspecified",
           location: profileData.location || "Unknown",
           bio: profileData.bio,
-          price: profileData.price,
+          price: profileData.price ? parseFloat(profileData.price) : undefined,
           image: profileData.image,
         }
       });
@@ -81,7 +81,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         update: {
           lookingFor: profileData.lookingFor,
           location: profileData.location,
-          capacity: profileData.capacity,
+          capacity: profileData.capacity ? parseInt(profileData.capacity.toString()) : undefined,
           image: profileData.image,
         },
         create: {
@@ -89,7 +89,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
           type: "Unspecified", // Default
           location: profileData.location || "Unknown",
           lookingFor: profileData.lookingFor,
-          capacity: profileData.capacity,
+          capacity: profileData.capacity ? parseInt(profileData.capacity.toString()) : undefined,
           image: profileData.image,
         }
       });
@@ -150,5 +150,36 @@ export const getAllUsers = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch users" });
+  }
+};
+
+export const subscribeNewsletter = async (req: Request, res: Response) => {
+  try {
+    const { email: rawEmail } = req.body;
+    
+    if (!rawEmail) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const email = rawEmail.toLowerCase();
+
+    // Check if already subscribed
+    const existing = await prisma.subscriber.findUnique({
+      where: { email }
+    });
+
+    if (existing) {
+      return res.status(400).json({ error: "Already subscribed" });
+    }
+
+    // Save subscriber
+    await prisma.subscriber.create({
+      data: { email }
+    });
+
+    res.status(201).json({ message: "Successfully subscribed" });
+  } catch (error) {
+    console.error("Subscription error:", error);
+    res.status(500).json({ error: "Failed to subscribe" });
   }
 };

@@ -257,7 +257,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
               </div>
             </div>
 
-            {profile.role === "ARTIST" && (
+            {formData.role === "ARTIST" && (
               <>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Category</label>
@@ -297,7 +297,7 @@ export function EditProfileModal({ isOpen, onClose, profile, onUpdate }: EditPro
               </>
             )}
 
-            {profile.role === "VENUE" && (
+            {formData.role === "VENUE" && (
               <>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Looking For (Bio)</label>

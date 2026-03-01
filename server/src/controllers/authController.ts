@@ -10,8 +10,8 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper to generate unique username
 const generateUniqueUsername = async (baseName: string): Promise<string> => {
-  // Remove special chars and spaces, make uppercase
-  let base = baseName.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  // Remove only spaces, make uppercase
+  let base = baseName.replace(/\s+/g, "").toUpperCase();
   if (base.length < 3) base = "USER" + crypto.randomBytes(2).toString('hex').toUpperCase();
 
   let username = base;
@@ -39,7 +39,7 @@ export const checkUsername = async (req: Request, res: Response) => {
     }
 
     // Generate suggestions
-    const base = username ? username.replace(/[^a-zA-Z0-9]/g, "") : "USER";
+    const base = username ? username.replace(/\s+/g, "").toUpperCase() : "USER";
     for (let i = 0; i < 3; i++) {
       const suffix = Math.floor(1000 + Math.random() * 9000);
       const suggestion = (base + suffix).toUpperCase();
@@ -127,11 +127,14 @@ export const login = async (req: Request, res: Response) => {
     // Check if identifier is email or username
     const isEmail = identifier.includes('@');
 
+    // For username we need to strip whitespace, matching our register logic
+    const sanitizedUsername = identifier.replace(/\s+/g, "").toUpperCase();
+
     const user = await prisma.user.findFirst({
       where: {
         OR: [
           { email: isEmail ? identifier.toLowerCase() : undefined },
-          { username: !isEmail ? identifier.toUpperCase() : undefined }
+          { username: !isEmail ? sanitizedUsername : undefined }
         ]
       },
       include: {

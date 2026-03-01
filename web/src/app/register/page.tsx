@@ -343,7 +343,7 @@ export default function RegisterPage() {
                           } focus:ring-2`}
                         placeholder="UNIQUE USERNAME"
                         value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })}
+                        onChange={(e) => setFormData({ ...formData, username: e.target.value.toUpperCase().replace(/\s+/g, "") })}
                       />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         {usernameStatus === "checking" && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}

@@ -27,16 +27,35 @@ export function ParallaxFooter() {
     validateEmail
   } = useEmailValidation()
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (validateEmail()) {
-      setStatus("success")
-      setMessage("Subscribed successfully!")
-      // Clear email after success if needed, or keep it
-      // setEmail("") 
-      setTimeout(() => {
-        setStatus("idle")
-        setMessage("")
-      }, 3000)
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/users/subscribe`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to subscribe")
+        }
+
+        setStatus("success")
+        setMessage("Subscribed successfully!")
+        if (typeof (useEmailValidation as any) === "function" && typeof email !== "undefined") {
+          // Attempt to clear if there's a way, otherwise leave it
+        }
+        
+        setTimeout(() => {
+          setStatus("idle")
+          setMessage("")
+        }, 3000)
+      } catch (error) {
+        setStatus("error")
+        setMessage(error instanceof Error ? error.message : "Something went wrong")
+      }
     }
   }
 
