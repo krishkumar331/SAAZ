@@ -1,3 +1,13 @@
-# node_modules
-# # Keep environment variables out of version control
-#-.env
+node_modules/
+dist/
+uploads/
+coverage/
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log

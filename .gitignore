@@ -1,12 +1,9 @@
+# Specific Project Files
 SAAZ _ Udyam Registration Certificate.pdf
-client_secret_57543675268-d4psk9bgktuf9n4epn101g7oufovft0v.apps.googleusercontent.com.json
-node_modules
-server/uploads/*
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+client_secret_*.json
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -16,14 +13,16 @@ server/uploads/*
 !.yarn/versions
 
 # testing
-/coverage
+coverage/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
+build/
 
-# production
-/build
+# server specific
+server/dist/
+server/uploads/
 
 # misc
 .DS_Store
@@ -35,8 +34,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
 
 # vercel
 .vercel

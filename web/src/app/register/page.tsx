@@ -57,6 +57,11 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username }),
       })
+      
+      if (!response.ok) {
+        throw new Error("Failed to check username")
+      }
+
       const data = await response.json()
 
       if (data.available) {
@@ -68,7 +73,8 @@ export default function RegisterPage() {
       }
     } catch (error) {
       console.error("Error checking username:", error)
-      setUsernameStatus("idle")
+      setUsernameStatus("idle") // Reset to idle rather than assuming it's taken when the API fails
+      setUsernameSuggestions([])
     }
   }
 
@@ -89,8 +95,16 @@ export default function RegisterPage() {
     }
 
     setIsGettingLocation(true)
+    
+    // Add a timeout fallback in case the browser hangs on mobile
+    const timeoutId = setTimeout(() => {
+      setIsGettingLocation(false)
+      showWarning("Location request timed out. Please enter manually.")
+    }, 10000)
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        clearTimeout(timeoutId)
         const { latitude, longitude } = position.coords
         try {
           // Using a free reverse geocoding API
@@ -123,10 +137,19 @@ export default function RegisterPage() {
         }
       },
       (error) => {
+        clearTimeout(timeoutId)
         console.error("Geolocation error:", error)
+        // More human-readable error messages for mobile
+        if (error.code === 1) {
+          showWarning("Location permission denied. Please enter manually.");
+        } else if (error.code === 2) {
+          showWarning("Location unavailable. Please enter manually.");
+        } else {
+          showWarning("Could not fetch location. Please enter manually.");
+        }
         setIsGettingLocation(false)
       },
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 } // Disabled high accuracy for faster mobile response
     )
   }
 
