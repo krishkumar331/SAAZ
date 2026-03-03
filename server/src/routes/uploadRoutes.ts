@@ -16,12 +16,18 @@ router.post('/', upload.single('image'), async (req: Request, res: Response): Pr
 
   try {
     const fileExt = req.file.originalname.split('.').pop() || 'tmp';
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const sanitizedName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
+    const fileName = `uploads/${Date.now()}-${sanitizedName}`;
+
+    // Convert Buffer to Uint8Array precisely like the V0 Next.js action
+    const arrayBuffer = new Uint8Array(req.file.buffer).buffer;
+    const fileBuffer = new Uint8Array(arrayBuffer);
 
     const { data, error } = await supabase.storage
-      .from('avatars')
-      .upload(fileName, req.file.buffer, {
+      .from('profile-images') // Used the new bucket from V0 docs
+      .upload(fileName, fileBuffer, {
         contentType: req.file.mimetype,
+        upsert: true,
       });
 
     if (error) {
