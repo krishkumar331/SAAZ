@@ -26,7 +26,7 @@ router.post('/', upload.single('image'), async (req: Request, res: Response): Pr
 
     if (error) {
       console.error('Supabase upload error:', error);
-      return res.status(500).json({ error: 'Failed to upload image to Supabase', details: error });
+      return res.status(500).json({ error: 'Failed to upload image to Supabase', details: error?.message || String(error) });
     }
 
     const { data: publicUrlData } = supabase.storage
