@@ -6,8 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 const router = Router();
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseRoleKey);
 
 router.post('/', upload.single('image'), async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
